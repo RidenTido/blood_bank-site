@@ -1,0 +1,94 @@
+/* Reset some default styles */
+body, ul, li, a {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    text-decoration: none;
+}
+
+/* Basic body styling */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+    border: 1px solid purple;
+}
+
+/* Header styling */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background-color: #d9534f;
+    color: white;
+}
+
+/* Logo styling */
+header a {
+    color: white;
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+/* Navigation links styling */
+.nav-links {
+    display: flex;
+    gap: 15px;
+}
+
+.nav-links li {
+    position: relative;
+}
+
+.nav-links a {
+    color: white;
+    font-size: 1em;
+    padding: 8px 12px;
+    transition: background-color 0.3s ease;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+    background-color: #c9302c;
+    border-radius: 4px;
+}
+
+/* Call to action link styling */
+.action {
+    background-color: #5cb85c;
+    padding: 10px 15px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.action:hover {
+    background-color: #4cae4c;
+}
+section{
+    height: 50vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    scroll-snap-align: start;
+}
+.one{
+    background-color: #5cb85c;
+}
+.two{
+    background-color: #e98a87;
+}
+.three{
+    background-color: #0f0962;
+}
+.Four{
+    background-color: #d17db5;
+}
+h1{
+    text-shadow: 1px  #000;
+}
+.container{
+    scroll-snap-type: y mandatory;
+    overflow-y: scroll;
+    height: 50vh;
+}
