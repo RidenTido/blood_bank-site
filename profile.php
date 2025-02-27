@@ -1,42 +1,61 @@
 <?php
+// Start the session
 session_start();
 
-if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php"); // Redirect to login if not logged in
-    exit();
+// Database connection parameters
+$host = 'localhost';
+$dbname = 'blood_bank';
+$user = 'root';
+$password = '123';
+
+// Connect to the database
+$conn = mysql_connect($host, $user, $password);
+if (!$conn) {
+    die('Could not connect: ' . mysql_error());
 }
 
-$servername = "localhost";
-$username = "root"; // Your database username
-$password = ""; // Your database password
-$dbname = "blood_bank";
+// Select the database
+mysql_select_db($dbname, $conn);
 
-$conn = new mysqli($servername, $username, $password, $dbname);
+// Check if the user is logged in
+if (isset($_SESSION['user_id'])) {
+    $loggedInUserId = $_SESSION['user_id'];
 
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+    // Define the query to retrieve user details
+    $query = "SELECT * FROM users WHERE id = " . intval($loggedInUserId);
 
-$user_id = $_SESSION['user_id'];
-$sql = "SELECT username, email, contact, gender, dob FROM users WHERE id = $user_id";
+    // Execute the query
+    $result = mysql_query($query);
+    if (!$result) {
+        die('Query failed: ' . mysql_error());
+    }
 
-$result = $conn->query($sql);
+    // Fetch the user details
+    $userDetails = mysql_fetch_assoc($result);
 
-if ($result->num_rows == 1) {
-    $user = $result->fetch_assoc();
+    // Display the user details and calculate age
+    if ($userDetails) {
+        $dob = $userDetails['dob']; // Assuming 'dob' is the column name for Date of Birth
+        $dobDateTime = new DateTime($dob);
+        $currentDateTime = new DateTime();
+        $age = $dobDateTime->diff($currentDateTime)->y;
 
-    // Calculate age
-    $dob = new DateTime($user['dob']);
-    $currentDate = new DateTime();
-    $age = $currentDate->diff($dob)->y;
+        $username = htmlspecialchars($userDetails['username']);
+        $email = htmlspecialchars($userDetails['email']);
+        $gender = htmlspecialchars($userDetails['gender']);
+        $contact = htmlspecialchars($userDetails['contact']);
+    } else {
+        echo 'No user found with the specified ID.';
+        exit;
+    }
 } else {
-    echo "User details not found.";
-    exit();
+    echo 'No user is logged in.';
+    exit;
 }
 
-$conn->close();
+// Close the database connection
+mysql_close($conn);
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -124,7 +143,7 @@ $conn->close();
                 <li><a href="HomePage.html">Home</a></li>
                 <li><a href="Request_Page.html">Request Blood</a></li>
                 <li><a href="Donation_Form.html">Donate Blood</a></li>
-                <li><a href="profile.php" class="active">Profile</a></li>
+                <li><a href="profile.html" class="active">Profile</a></li>
             </ul>
         </nav>
         <a href="logout.php" class="action">Logout</a>
@@ -132,10 +151,10 @@ $conn->close();
     <div class="container">
         <h2>Profile Details</h2>
         <div class="profile-info">
-        <p><strong>Username:</strong> <?php echo htmlspecialchars($user['username']); ?></p>
-            <p><strong>Email:</strong> <?php echo htmlspecialchars($user['email']); ?></p>
-            <p><strong>Contact:</strong> <?php echo htmlspecialchars($user['contact']); ?></p>
-            <p><strong>Gender:</strong> <?php echo htmlspecialchars($user['gender']); ?></p>
+            <p><strong>Username:</strong> <?php echo $username; ?></p>
+            <p><strong>Email:</strong> <?php echo $email; ?></p>
+            <p><strong>Contact:</strong> <?php echo $contact; ?></p>
+            <p><strong>Gender:</strong> <?php echo $gender; ?></p>
             <p><strong>Age:</strong> <?php echo $age; ?> years</p>
         </div>
         <div class="btn-container">
